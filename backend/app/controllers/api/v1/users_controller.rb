@@ -8,9 +8,11 @@ class Api::V1::UsersController < ApplicationController
     user = User.find(params[:id])
     render json: user
   end
-  
-  # def create
-  # end
 
+  def create
+    user = User.find_or_create_by(name: params[:name])
+
+    render json: UserSerializer.new(user).to_serialized_json
+  end
   
 end
