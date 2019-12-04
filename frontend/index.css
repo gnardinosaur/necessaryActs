@@ -2,6 +2,19 @@
     position: relative;
 }
 
+.title {
+    margin-top: 200px;
+    text-align: center;
+}
+
+.login {
+    text-align: center;
+}
+
+input {
+    margin: 5px;
+}
+
 .switch {
     position: absolute;
     top: 25px;
