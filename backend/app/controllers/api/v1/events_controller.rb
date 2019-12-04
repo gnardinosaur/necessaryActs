@@ -15,6 +15,13 @@ class Api::V1::EventsController < ApplicationController
         event.users << User.find(params[:user])
         render json: event
     end
+
+    def update
+        event = Event.find(params[:id])
+        event.update(title: params[:title], content: params[:content], start_time: params[:start], end_time: params[:end])
+        render json: event
+    end
+
 end
 
 
