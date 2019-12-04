@@ -4,7 +4,7 @@ const main = document.querySelector("#main");
 let newEventForm;
 let eventList;
 
-// listener for login_form submit
+//listener for login_form submit
 loginForm.addEventListener("submit", function(e) {
     let username = document.querySelector("#username").value;
 
@@ -26,7 +26,7 @@ loginForm.addEventListener("submit", function(e) {
         })
 })
 
-// HTML to render user list view 
+//HTML to render user list view 
 function showUserListView(user) {
     let listViewHTML = 
         `<div class="switch">
@@ -43,7 +43,7 @@ function showUserListView(user) {
                 <input type="text" id="title"><br />
                 
                 <label>Event Description</label><br />
-                <textarea id="description"></textarea><br />
+                <textarea id="content"></textarea><br />
                 
                 <label>Start Time</label><br />
                 <input type="datetime-local" id="start"><br />
@@ -61,40 +61,26 @@ function showUserListView(user) {
         </div>`
 
     main.innerHTML = listViewHTML;
-    getUserEventsForUser(user);
+    getEvents(user);
 }
 
-function getUserEventsForUser(user) {
-    fetch("http://localhost:3000/api/v1/user_events")
+function getEvents(user) {
+    fetch(`http://localhost:3000/api/v1/users/${user.id}/events`)
         .then(resp => resp.json())
-        .then(function(allUserEvents) {
-            let userEvents = allUserEvents.filter(function(userEvent) {
-                return userEvent.user_id === user.id
+        .then(function(events) {
+            events.forEach(function(el){
+                let liHTML = `<li>${el.title}</li>`;    
+                eventList.innerHTML += liHTML;
             })
-            let events = userEvents.map(function(el){
-                return el.event_id
-            })
-            displayUserEvents(events);
         })
 }
 
-function displayUserEvents(events) {
-    events.forEach(function(el){
-        fetch(`http://localhost:3000/api/v1/events/${el}`)
-            .then(resp => resp.json())
-            .then(function(event){
-                let liHTML = `<li>${event.title}</li>`;
-                eventList.innerHTML += liHTML;
-            })
-    })
-}
-
-// can't add a listener on something that doesn't exist yet 
+//using and calling a function b/c we can't add a listener on something that doesn't exist yet 
 function newEventFormListener(user) {
     newEventForm.addEventListener("submit", function(e){
         e.preventDefault();
         let title = document.querySelector("#title").value;
-        let description = document.querySelector("#description").value;
+        let content = document.querySelector("#content").value;
         let start = document.querySelector("#start").value;
         let end = document.querySelector("#end").value;
         //first, create new Event 
@@ -106,11 +92,16 @@ function newEventFormListener(user) {
             },
             body: JSON.stringify({ 
                 "title": `${title}`,
-                "description": `${description}`,
+                "content": `${content}`,
                 "start": `${start}`,
                 "end": `${end}`,
             })
         })
+            .then(resp => resp.json())
+            .then(function(newEvent){
+                let liHTML = `<li>${newEvent.title}</li>`;    
+                eventList.innerHTML += liHTML;
+            })
         //second, POST fetch() to /user_events to create a new UserEvent with event_id and user_id
     })
 }

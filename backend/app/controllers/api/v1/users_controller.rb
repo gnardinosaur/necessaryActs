@@ -15,4 +15,11 @@ class Api::V1::UsersController < ApplicationController
     render json: UserSerializer.new(user).to_serialized_json
   end
   
+  def events
+    user = User.find(params[:id])
+    events = user.events
+
+    render json: events
+  end
+
 end
