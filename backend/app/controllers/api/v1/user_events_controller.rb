@@ -5,4 +5,8 @@ class Api::V1::UserEventsController < ApplicationController
         render json: user_events
     end
 
+    def create
+        user_event = UserEvent.create(title: params[:title], )
+    end
+
 end
