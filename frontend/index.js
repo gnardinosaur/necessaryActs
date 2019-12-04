@@ -1,6 +1,7 @@
 const loginForm = document.querySelector("#login_form");
 const main = document.querySelector("#main");
 
+let modal;
 let newEventForm;
 let eventList;
 
@@ -23,6 +24,7 @@ loginForm.addEventListener("submit", function(e) {
             eventList = document.getElementById("events");
             newEventForm = document.querySelector("#new_event");
             newEventFormListener(user);
+            eventListListener();
         })
 })
 
@@ -37,7 +39,7 @@ function showUserListView(user) {
         </div>
 
         <div class="sidenav">
-            <h4>Create A New Event</h4>
+            <h3>Create A New Event</h3>
             <form id="new_event">
                 <label>Event Title</label><br />
                 <input type="text" id="title"><br />
@@ -55,9 +57,14 @@ function showUserListView(user) {
             </form>
         </div>
         <div class="list_body">
-            <h3>${user.name}'s Necessary Acts</h3>
+            <h2>${user.name}'s Necessary Acts</h2>
                 <ul id="events">
                 </ul>
+        </div>
+        
+        <div id="my_modal" class="modal">
+            <div class="modal_content">
+            </div>
         </div>`
 
     main.innerHTML = listViewHTML;
@@ -69,7 +76,12 @@ function getEvents(user) {
         .then(resp => resp.json())
         .then(function(events) {
             events.forEach(function(el){
-                let liHTML = `<li>${el.title}</li>`;    
+                let liHTML = 
+                    `<li id=${el.id}>
+                        <h4>${el.title}<h4>
+                        <input class="edit_button" type="button" value="Edit Event">
+                        <input class="delete_button" type="button" value="Delete Event"></input>    
+                    </li>`
                 eventList.innerHTML += liHTML;
             })
         })
@@ -83,7 +95,7 @@ function newEventFormListener(user) {
         let content = document.querySelector("#content").value;
         let start = document.querySelector("#start").value;
         let end = document.querySelector("#end").value;
-        //first, create new Event 
+        
         fetch("http://localhost:3000/api/v1/events", {
             method: "POST",
             headers: {
@@ -95,13 +107,68 @@ function newEventFormListener(user) {
                 "content": `${content}`,
                 "start": `${start}`,
                 "end": `${end}`,
+                "user": `${user.id}`
             })
         })
             .then(resp => resp.json())
             .then(function(newEvent){
-                let liHTML = `<li>${newEvent.title}</li>`;    
+                let liHTML = 
+                    `<li id=${newEvent.id}>
+                        <h4>${newEvent.title}<h4>
+                        <input class="edit_button" type="button" value="Edit Event">
+                        <input class="delete_button" type="button" value="Delete Event">
+                    </li>`;    
                 eventList.innerHTML += liHTML;
+                newEventForm.reset();
+                
             })
-        //second, POST fetch() to /user_events to create a new UserEvent with event_id and user_id
     })
 }
+
+function eventListListener() {
+    eventList.addEventListener("click", function(e){
+        if (e.target.classList.contains("edit_button")) {
+            editEvent(e.target.closest("li"));
+        } else if (e.target.classList.contains("delete_button")) {
+            deleteEvent(e.target.closest("li"));
+        }
+    })
+}
+
+function editEvent(listItem) {
+    modal = document.getElementById("my_modal");
+    modal.style.display = "block";
+    
+    fetch(`http://localhost:3000/api/v1/events/${listItem.id}`)
+        .then(resp => resp.json())
+        .then(function(event){
+            let start = event.start_time.substring(0, 16);
+            let end = event.end_time.substring(0, 16)
+            let formToEdit =    
+                `<form id="new_event">
+                    <label>Event Title</label><br />
+                    <input type="text" id="title" value="${event.title}"><br />
+
+                    <label>Event Description</label><br />
+                    <textarea id="content">${event.content}</textarea><br />
+
+                    <label>Start Time</label><br />
+                    <input type="datetime-local" id="start" value="${start}"><br />
+                    
+                    <label>End Time</label><br />
+                    <input type="datetime-local" id="end" value="${end}"><br />
+
+                    <input type="submit" value="Edit Event">
+                </form>
+                <span class="close">&times;</span>`
+            let modalContent = document.querySelector(".modal_content");
+            modalContent.innerHTML = formToEdit;    
+        })
+}
+
+
+function deleteEvent(listItem) {
+    modal = document.getElementById("my_modal");
+    modal.style.display = "block";
+}
+
