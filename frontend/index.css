@@ -53,10 +53,15 @@ li {
     border-style: solid;
     border-width: 2px;
     border-color: goldenrod;
-    width: 300px;
+    border-radius: 5px;
+    width: 75%;
     margin: 10px 0px 10px 0px;
     padding: 10px;
     list-style-type: none;
+}
+
+#countdown {
+    color: goldenrod;
 }
 
 .edit_button {
@@ -81,19 +86,13 @@ li {
     padding: 10px;
 }
 
-.switch {
-    position: absolute;
-    top: 25px;
-    left: 700px;
-}
-
 .sidenav {
     height: 100%;
     width: 250px;
     position: fixed;
     background-color: goldenrod;
     overflow-x: hidden;
-    padding: 20px 10px;
+    padding: 40px 10px;
     box-sizing: border-box;
 }
 
@@ -107,8 +106,18 @@ textarea {
     padding: 20px 10px;
 }
 
-.toggle {
+#events {
     position: relative;
+}
+
+.switch {
+    position: absolute;
+    top: -45px;
+    right: 30%;
+}
+
+.toggle {
+    position: absolute;
     display: inline-block;
     width: 38px;
     height: 22px;
@@ -118,6 +127,26 @@ textarea {
     opacity: 0;
     width: 0;
     height: 0;
+}
+
+.fc-prev-button {
+    background-color: goldenrod;
+}
+
+.fc-prev-button:hover {
+    background-color: rgb(194, 145, 22)
+}
+
+.fc-next-button {
+    background-color: goldenrod;
+}
+
+.fc-next-button:hover {
+    background-color: rgb(194, 145, 22)
+}
+
+#calendar_div {
+    width: 75%;
 }
 
 .slider {

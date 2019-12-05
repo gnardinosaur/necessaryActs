@@ -1,10 +1,14 @@
 const loginForm = document.querySelector("#login_form");
 const main = document.querySelector("#main");
 
+
 let modal;
 let newEventForm;
 let eventList;
 let modalContent;
+let toggleButton;
+let userObject;
+let viewToggle = true;
 
 //listener for login_form submit
 loginForm.addEventListener("submit", function(e) {
@@ -21,25 +25,20 @@ loginForm.addEventListener("submit", function(e) {
     })
         .then(resp => resp.json())
         .then(function(user){
+            userObject = user
             showUserListView(user);
             eventList = document.getElementById("events");
             newEventForm = document.querySelector("#new_event");
             newEventFormListener(user);
             eventListModalListener();
+            toggleButtonListener();
         })
 })
 
 //HTML to render user list view 
 function showUserListView(user) {
     let listViewHTML = 
-        `<div class="switch">
-            <label class="toggle">
-                <input type="checkbox" checked>
-                <span class="slider round"></span>
-            </label>
-        </div>
-
-        <div class="sidenav">
+        `<div class="sidenav">
             <h3>Create A New Event</h3>
             <form id="new_event">
                 <label>Event Title</label><br />
@@ -60,6 +59,7 @@ function showUserListView(user) {
         <div class="list_body">
             <h2>${user.name}'s Necessary Acts</h2>
                 <ul id="events">
+                    <input type="button" id="toggle_button" value="Calendar View">
                 </ul>
         </div>
         
@@ -75,7 +75,7 @@ function showUserListView(user) {
 function getEvents(user) {
     fetch(`http://localhost:3000/api/v1/users/${user.id}/events`)
         .then(resp => resp.json())
-        .then(function(events) {
+        .then(function(events) {    
             events.forEach(function(el){
                 
                 let now = Date.now()
@@ -83,21 +83,18 @@ function getEvents(user) {
                 let distance = d - now;   
                 
                 let liHTML = 
-                `<li id=${el.id}>
-                <h5 > You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
-                <h4>${el.title}</h4>
-                <input class="edit_button" type="button" value="Edit Event">
-                <input class="delete_button" type="button" value="Delete Event"></input>    
-                </li>`
+                    `<li id=${el.id}>
+                        <h5 > You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
+                        <h4>${el.title}</h4>
+                        <input class="edit_button" type="button" value="Edit Event">
+                        <input class="delete_button" type="button" value="Delete Event"></input>    
+                    </li>`
                 
-                // startCountDown(d)
                 eventList.innerHTML += liHTML;
-                // startTimer = setInterval(function () { convertMS(distance); }, 1000);
-            })
-            
         })
+            
+    })
 }
-
 
 function convertMS(milliseconds) {
     let day, hour, minute, seconds;
@@ -138,14 +135,14 @@ function newEventFormListener(user) {
         })
             .then(resp => resp.json())
             .then(function(newEvent){
-
-                let now = Date.now()
-                let d = new Date(start)
+                //right now newEvent is added to end of event list - figure out how to inject into list so that it's sorted
+                let now = Date.now();
+                let d = new Date(start);
                 let distance = d - now;
 
                 let liHTML =
                     `<li id=${newEvent.id}>
-                        <h5> You have ${convertMS(distance)} until your event</h5>
+                        <h5> You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
                         <h4>${newEvent.title}<h4>
                         <input class="edit_button" type="button" value="Edit Event">
                         <input class="delete_button" type="button" value="Delete Event">
@@ -173,7 +170,6 @@ function editEventModal(listItem) {
     fetch(`http://localhost:3000/api/v1/events/${listItem.id}`)
         .then(resp => resp.json())
         .then(function(event){
-            // debugger
             let start = event.start_time.substring(0, 16);
             let end = event.end_time.substring(0, 16)
             let formToEdit =    
@@ -258,10 +254,6 @@ function deleteEventModalListeners(eventId) {
     })
 }
   
-
-
-
-
 function deleteEvent(eventId) {
     fetch(`http://localhost:3000/api/v1/events/${eventId}`, {
         method: "DELETE",
@@ -274,3 +266,48 @@ function deleteEvent(eventId) {
     document.getElementById("my_modal").style.display = "none";
     document.getElementById(`${eventId}`).remove();
 }
+
+function toggleButtonListener() {
+    document.addEventListener("click", function(e) {
+        if (e.target.id === "toggle_button") {
+            viewToggle = !viewToggle;
+            let cal;
+            if (viewToggle === true) {
+                cal = document.querySelector("#calendar_div");
+                cal.style.display = "none";
+                showUserListView(userObject);
+                eventList = document.getElementById("events");
+                eventListModalListener();
+            } else {
+                calendarView(userObject);
+            }
+        }
+    })
+}
+
+function calendarView(userObject) {
+    let newEvents = userObject.events.map(function(event){
+        return {
+            title: event.title,
+            start: event.start_time,
+            end: event.end_time
+        }
+    })
+    console.log(newEvents)
+    eventList.innerHTML = 
+    `<div id="calendar_div">
+        <input type="button" id="toggle_button" value="List View">
+    </div>`;
+    
+    let calendarEl = document.getElementById("calendar_div");
+    let calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ 'dayGrid' ],
+        defaultView: 'dayGridMonth',
+        timeZone: 'UTC',
+        events: newEvents
+    });
+    calendar.render();
+}
+            
+
+

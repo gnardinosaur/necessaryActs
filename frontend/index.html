@@ -3,8 +3,14 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Necessary Acts</title>
-        <script src="index.js" defer></script>
+        
+        <link href='fullcalendar-4.3.1/packages/core/main.css' rel='stylesheet' />
+        <link href='fullcalendar-4.3.1/packages/daygrid/main.css' rel='stylesheet' />
         <link rel="stylesheet" href="index.css">
+        
+        <script src='fullcalendar-4.3.1/packages/core/main.js' defer ></script>
+        <script src='fullcalendar-4.3.1/packages/daygrid/main.js' defer ></script>
+        <script src="index.js" defer></script>
     </head>
     <body>
         <main id="main">
@@ -13,7 +19,7 @@
             </div>
             <div class="login">
                 <form id="login_form">
-                    <label>Username:</label><br />
+                    <label>username:</label><br />
                     <input type="text" id="username"><br />
                     <input type="submit" value="Log In">
                 </form>
