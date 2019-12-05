@@ -76,16 +76,41 @@ function getEvents(user) {
     fetch(`http://localhost:3000/api/v1/users/${user.id}/events`)
         .then(resp => resp.json())
         .then(function(events) {
-            events.forEach(function(el){ 
+            events.forEach(function(el){
+                
+                let now = Date.now()
+                let d = new Date(el.start_time)
+                let distance = d - now;   
+                
                 let liHTML = 
-                    `<li id=${el.id}>
-                        <h4>${el.title}<h4>
-                        <input class="edit_button" type="button" value="Edit Event">
-                        <input class="delete_button" type="button" value="Delete Event"></input>    
-                    </li>`
+                `<li id=${el.id}>
+                <h5 > You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
+                <h4>${el.title}</h4>
+                <input class="edit_button" type="button" value="Edit Event">
+                <input class="delete_button" type="button" value="Delete Event"></input>    
+                </li>`
+                
+                // startCountDown(d)
                 eventList.innerHTML += liHTML;
+                // startTimer = setInterval(function () { convertMS(distance); }, 1000);
             })
+            
         })
+}
+
+
+function convertMS(milliseconds) {
+    let day, hour, minute, seconds;
+    seconds = Math.floor(milliseconds / 1000);
+    minute = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    hour = Math.floor(minute / 60);
+    minute = minute % 60;
+    day = Math.floor(hour / 24);
+    hour = hour % 24;
+
+    let htmlMATH = `${day} days and ${hour} hours `
+    return htmlMATH
 }
 
 //using and calling a function b/c we can't add a listener on something that doesn't exist yet 
@@ -113,15 +138,21 @@ function newEventFormListener(user) {
         })
             .then(resp => resp.json())
             .then(function(newEvent){
-                let liHTML = 
+
+                let now = Date.now()
+                let d = new Date(start)
+                let distance = d - now;
+
+                let liHTML =
                     `<li id=${newEvent.id}>
+                        <h5> You have ${convertMS(distance)} until your event</h5>
                         <h4>${newEvent.title}<h4>
                         <input class="edit_button" type="button" value="Edit Event">
                         <input class="delete_button" type="button" value="Delete Event">
-                    </li>`;    
+                    </li>`;
                 eventList.innerHTML += liHTML;
+
                 newEventForm.reset();
-                
             })
     })
 }
@@ -142,6 +173,7 @@ function editEventModal(listItem) {
     fetch(`http://localhost:3000/api/v1/events/${listItem.id}`)
         .then(resp => resp.json())
         .then(function(event){
+            // debugger
             let start = event.start_time.substring(0, 16);
             let end = event.end_time.substring(0, 16)
             let formToEdit =    
@@ -225,6 +257,10 @@ function deleteEventModalListeners(eventId) {
         }
     })
 }
+  
+
+
+
 
 function deleteEvent(eventId) {
     fetch(`http://localhost:3000/api/v1/events/${eventId}`, {
