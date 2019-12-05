@@ -37,7 +37,7 @@
     color: goldenrod;
 }
 
-.close {
+.modal_content .close {
     color: lightcoral;
     float: right;
     font-size: 28px;
@@ -53,7 +53,7 @@ li {
     border-style: solid;
     border-width: 2px;
     border-color: goldenrod;
-    width: 200px;
+    width: 300px;
     margin: 10px 0px 10px 0px;
     padding: 10px;
     list-style-type: none;
