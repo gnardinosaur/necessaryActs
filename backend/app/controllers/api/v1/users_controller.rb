@@ -18,6 +18,8 @@ class Api::V1::UsersController < ApplicationController
   def events
     user = User.find(params[:id])
     events = user.events
+    
+    # sort events by start_time
 
     render json: events
   end
