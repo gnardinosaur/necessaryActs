@@ -25,7 +25,7 @@ loginForm.addEventListener("submit", function(e) {
             eventList = document.getElementById("events");
             newEventForm = document.querySelector("#new_event");
             newEventFormListener(user);
-            eventListListener();
+            eventListModalListener();
         })
 })
 
@@ -126,7 +126,7 @@ function newEventFormListener(user) {
     })
 }
 
-function eventListListener() {
+function eventListModalListener() {
     eventList.addEventListener("click", function(e){
         if (e.target.className === "edit_button") {
             editEventModal(e.target.closest("li"));
@@ -172,9 +172,7 @@ function editEventModalListeners(itemId) {
     let editForm = document.querySelector("#edit_event")
 
     closeButton.addEventListener("click", function(e) {
-       if (e.target === closeButton) { 
         document.getElementById("my_modal").style.display = "none";
-        }
     })
     
     editForm.addEventListener("submit", function(e) {
@@ -218,7 +216,25 @@ function deleteEventModal(listItem) {
     deleteEventModalListeners(parseInt(listItem.id));
 }
 
-function deleteEventModalListeners(id) {
-    console.log(id)
+function deleteEventModalListeners(eventId) {
+    modalContent.addEventListener("click", function(e) {
+        if (e.target.className === "delete_button") {
+            deleteEvent(eventId);
+        } else if (e.target.className === "no_button") {
+            document.getElementById("my_modal").style.display = "none";
+        }
+    })
 }
 
+function deleteEvent(eventId) {
+    fetch(`http://localhost:3000/api/v1/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        body: JSON.stringify({ "id": `${eventId}`})
+    })
+    document.getElementById("my_modal").style.display = "none";
+    document.getElementById(`${eventId}`).remove();
+}
