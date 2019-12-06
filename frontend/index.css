@@ -18,10 +18,13 @@ body {
 .title {
     margin-top: 350px;
     text-align: center;
+    font-family: 'Bubblegum Sans', cursive;
+    font-size: 36px;
 }
 
 .login {
     text-align: center;
+    font-family: 'Bubblegum Sans', cursive;
 }
 
 .modal {
