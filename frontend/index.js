@@ -9,6 +9,7 @@ let modalContent;
 let toggleButton;
 let userObject;
 let viewToggle = true;
+let bg = document.body;
 
 //listener for login_form submit
 loginForm.addEventListener("submit", function(e) {
@@ -25,7 +26,8 @@ loginForm.addEventListener("submit", function(e) {
     })
         .then(resp => resp.json())
         .then(function(user){
-            userObject = user
+            bg.style.backgroundImage = "none";
+            userObject = user;
             showUserListView(user);
             eventList = document.getElementById("events");
             newEventForm = document.querySelector("#new_event");
