@@ -2,8 +2,21 @@
     position: relative;
 }
 
+body {
+    background-image: url("resources/landing_image.jpeg");
+    height: 100%;
+    background-size: cover;
+}
+
+#login_button {
+    background-color: rgb(230, 204, 139);
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+}
+
 .title {
-    margin-top: 200px;
+    margin-top: 350px;
     text-align: center;
 }
 
@@ -110,23 +123,13 @@ textarea {
     position: relative;
 }
 
-.switch {
+#toggle_button {
     position: absolute;
     top: -45px;
     right: 30%;
-}
-
-.toggle {
-    position: absolute;
-    display: inline-block;
-    width: 38px;
-    height: 22px;
-}
-
-.toggle input { 
-    opacity: 0;
-    width: 0;
-    height: 0;
+    background-color: lightslategray;
+    color: white;
+    border-radius: 5px;
 }
 
 .fc-prev-button {
@@ -145,50 +148,16 @@ textarea {
     background-color: rgb(194, 145, 22)
 }
 
+.fc-today-button {
+    background-color: lightslategray;
+}
+
+.fc-day-grid-event {
+    background-color: goldenrod;
+    border: none;
+    color: black;
+}
+
 #calendar_div {
     width: 75%;
 }
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 15px;
-    width: 15px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-}
-  
-input:checked + .slider:before {
-    -webkit-transform: translateX(15px);
-    -ms-transform: translateX(15px);
-    transform: translateX(15px);
-}
-
-.slider.round {
-    border-radius: 15px;
-}
-  
-.slider.round:before {
-    border-radius: 50%;
-}
-  
-  
