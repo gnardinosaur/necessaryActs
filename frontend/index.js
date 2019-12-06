@@ -8,6 +8,7 @@ let eventList;
 let modalContent;
 let toggleButton;
 let userObject;
+//let newEventObjects = {}; was using for adding multiple events to calendar w/o refersh -- not needed if you're just adding 1 event w/o refersh 
 let viewToggle = true;
 let bg = document.body;
 
@@ -26,7 +27,7 @@ loginForm.addEventListener("submit", function(e) {
     })
         .then(resp => resp.json())
         .then(function(user){
-            bg.style.backgroundImage = "none";
+            bg.style.backgroundImage = "none"
             userObject = user;
             showUserListView(user);
             eventList = document.getElementById("events");
@@ -112,7 +113,6 @@ function convertMS(milliseconds) {
     return htmlMATH
 }
 
-//using and calling a function b/c we can't add a listener on something that doesn't exist yet 
 function newEventFormListener(user) {
     newEventForm.addEventListener("submit", function(e){
         e.preventDefault();
@@ -136,22 +136,34 @@ function newEventFormListener(user) {
             })
         })
             .then(resp => resp.json())
-            .then(function(newEvent){
-                //right now newEvent is added to end of event list - figure out how to inject into list so that it's sorted
-                let now = Date.now();
-                let d = new Date(start);
-                let distance = d - now;
+            .then(function(newEvent) {
+                
+                if (viewToggle) {
+                    let now = Date.now();
+                    let d = new Date(start);
+                    let distance = d - now;
 
-                let liHTML =
-                    `<li id=${newEvent.id}>
-                        <h5> You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
-                        <h4>${newEvent.title}<h4>
-                        <input class="edit_button" type="button" value="Edit Event">
-                        <input class="delete_button" type="button" value="Delete Event">
-                    </li>`;
-                eventList.innerHTML += liHTML;
+                    let liHTML =
+                        `<li id=${newEvent.id}>
+                            <h5> You have <span id="countdown">${convertMS(distance)}</span> until your event</h5>
+                            <h4>${newEvent.title}<h4>
+                            <input class="edit_button" type="button" value="Edit Event">
+                            <input class="delete_button" type="button" value="Delete Event">
+                        </li>`;
+                    //right now newEvent is added to end of event list - figure out how to inject and render as sorted list 
+                    eventList.innerHTML += liHTML;
 
-                newEventForm.reset();
+                    newEventForm.reset();
+                } else {
+                    //add event to calendar
+                    let newestEvent = {
+                        title: newEvent.title,
+                        start: newEvent.start_time,
+                        end: newEvent.end_time
+                    };
+                    calendarView(userObject, newestEvent);
+                    newEventForm.reset();
+                }
             })
     })
 }
@@ -287,15 +299,15 @@ function toggleButtonListener() {
     })
 }
 
-function calendarView(userObject) {
-    let newEvents = userObject.events.map(function(event){
+function calendarView(userObject, newestEvent = {}) {
+    let existingEvents = userObject.events.map(function(event){
         return {
             title: event.title,
             start: event.start_time,
             end: event.end_time
         }
-    })
-    console.log(newEvents)
+    });
+    existingEvents.push(newestEvent)
     eventList.innerHTML = 
     `<div id="calendar_div">
         <input type="button" id="toggle_button" value="List View">
@@ -306,10 +318,12 @@ function calendarView(userObject) {
         plugins: [ 'dayGrid' ],
         defaultView: 'dayGridMonth',
         timeZone: 'UTC',
-        events: newEvents
+        events: existingEvents
     });
     calendar.render();
 }
+
+
             
 
 
