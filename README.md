@@ -1,5 +1,5 @@
-# README
+## Necessary Acts 
 
-Simple yet elegant to do app with list and calendar view. 
+A simple yet elegant to-do app with list and calendar views. 
 
 - Tiana & Nick
